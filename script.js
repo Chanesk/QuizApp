@@ -1,5 +1,14 @@
 let monFormulaire = document.querySelector("#mon_formulaire");
 let contennair = document.querySelector(".container");
+let nextBtn = document.getElementById("btn_green");
+let exitBtn = document.getElementById("btn_orange");
+let accueilBtn = document.getElementById("accueil");
+let monInput = document.querySelectorAll('input[type="radio"]');
+
+let firstContenair;
+let secondContenair;
+let thirdContennair;
+let accueilPage;
 
 let ctr = 0;
 let num = 1;
@@ -8,105 +17,144 @@ let username = "";
 let email = "";
 let intervalID;
 
+for (let i = 0; i < monInput.length; i++) {
+  monInput[i].addEventListener("change", function (e) {
+    document.querySelector(".borderGreen")?.classList.remove("borderGreen");
+    e.target.parentElement.classList.add("borderGreen");
+    nextBtn.style.background = "#028a3d";
+  });
+}
+
 monFormulaire.addEventListener("submit", commencer);
-// document.getElementById("submit").disabled = true;
 function commencer(e) {
   e.preventDefault();
 
   let monNom = e.target.elements["nom"].value;
   let monMail = e.target.elements["mail"].value;
-  let validMail = monMail.match(/@/g);
+  validNom(monNom) && validEmail(monMail);
+  if (validNom(monNom) === false || validEmail(monMail) === false) {
+    return;
+  } else {
+    firstContenair = e.target.offsetParent;
+    username = monNom;
+    email = monMail;
 
-  if (!validNom(monNom) || !validEmail(validMail)) return;
+    firstContenair.style.display = "none";
+    firstContenair.nextElementSibling.style.display = "flex";
 
-  quizzes(contennair);
-  username = monNom;
-  email = monMail;
-  // moveBar();
-
-  let monInput = document.querySelectorAll('input[type="radio"]');
-
-  for (let i = 0; i < monInput.length; i++) {
-    if (monInput[i].checked) {
-      if (monInput[i].value === questions[ctr]?.answers) {
-        score++;
-      }
-    }
+    quizzes();
+    moveBar();
+    nextBtn.textContent = "Suivant";
+    e.target.reset();
+    score = 0;
   }
 
-  // let formQuiz = document.getElementById("form_quiz");
-  buttonGreen();
-  exitBtn();
-  // document.getElementById("btn_orange").addEventListener("click", showAccueil);
+  nextBtn.addEventListener("click", buttonGreen);
+  exitBtn.addEventListener("click", exitQuiz);
+  accueilBtn.addEventListener("click", showAccueil);
 }
 
 function validNom(monNom) {
-  if (!monNom) {
-    document.querySelector("#info_nom").innerText =
-      "Veuillez  renseigner un Nom valide.";
-    return false;
+  let verify;
+  let nom = document.querySelector("#info_nom");
+
+  if (!monNom || monNom.length == 1) {
+    if (!monNom) {
+      nom.innerText = "Veuillez  renseigner un Nom valide.";
+      document.querySelector(".box_quiz div input").style.border =
+        "1px solid #ff3838";
+    }
+    if (monNom.length == 1) {
+      nom.innerText = "veuillez renseigner un nom d’au moins deux caractères.";
+      document.querySelector(".box_quiz div input").style.border =
+        "1px solid #ff3838";
+    }
+
+    verify = false;
+  } else {
+    nom.innerText = "";
+    verify = true;
   }
-  if (monNom.length === 1) {
-    document.querySelector("#info_nom").innerText =
-      "veuillez renseigner un nom d’au moins deux caractères.";
-    return false;
-  }
-  return monNom;
+
+  return verify;
 }
 
-function validEmail(validMail) {
-  if (validMail === null) {
-    document.querySelector("#info_email").innerText =
-      "renseigner une adresse email valide.";
-    return false;
+function validEmail(monMail) {
+  let verify;
+  let validMail = monMail.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g);
+  let mail = document.querySelector("#info_email");
+
+  if (monMail === "") {
+    mail.innerText = "veillez renseigner une adresse email";
+    document.querySelector("#mail").style.border = "1px solid #ff3838";
+
+    verify = false;
+  } else if (validMail === null) {
+    mail.innerText = "renseigner une adresse email valide.";
+    document.querySelector("#mail").style.border = "1px solid #ff3838";
+
+    verify = false;
+  } else {
+    mail.innerText = "";
+    verify = true;
   }
-  return validMail;
+  return verify;
 }
+
 function quizzes(contennair) {
-  contennair.innerHTML = `
- <div class="box_questions" id="box_questions">
-  
-        <p id="quest_text">${questions[ctr]?.question}</p>
-        <div id="progres_bar">
-          <div id="question_count">
-            <div>Question <span id="quest_count">${num}</span>/15</div>
-            <div><span id="count_time"></span></div>
-          </div>
-          <div id="myProgress">
-            <div id="myBar"></div>
-          </div>
-        </div>
-        <form action="">
-          <div class="form_div">
-            <div>
-              <input type="radio" value="${questions[ctr]?.assertions[0]}" id="assertion_first" name="assertion" />
-              <label for="assertion_prem" id="ass_first">${questions[ctr]?.assertions[0]}</label>
-            </div>
-            <div>
-              <input type="radio" value="${questions[ctr]?.assertions[1]}" id="assertion_second" name="assertion" />
-              <label for="assertion_deux" id="ass_second">${questions[ctr]?.assertions[1]}</label>
-            </div>
-            <div>
-              <input type="radio" value="${questions[ctr]?.assertions[2]}" id="assertion_third" name="assertion" />
-              <label for="assertion_trois" id="ass_third">${questions[ctr]?.assertions[2]}</label>
-            </div>
-            <div>
-              <input type="radio" value="${questions[ctr]?.assertions[3]}" id="assertion_fourth" name="assertion" />
-              <label for="assertion_quatre" id="ass_fourth">${questions[ctr]?.assertions[3]}</label>
-            </div>
-          </div>
-          <div class="submit_btn">
-            <div>
-              <button type="submit" id="btn_orange">Quitter</button>
-            </div>
-            <div>
-              <button type="submit" id="btn_green">Suivant</button>
-            </div>
-          </div>
-        </form>
-      </div>`;
+  let assertionFirst = (document.getElementById("quest_text").innerText =
+    questions[ctr]?.question);
+  document.getElementById("quest_count").innerText = num;
+  document.getElementById("ass_first").innerText =
+    questions[ctr]?.assertions[0];
+  document.getElementById("ass_second").innerText =
+    questions[ctr]?.assertions[1];
+  document.getElementById("ass_third").innerText =
+    questions[ctr]?.assertions[2];
+  document.getElementById("ass_fourth").innerText =
+    questions[ctr]?.assertions[3];
+  document
+    .getElementById("assertion_first")
+    .setAttribute("value", questions[ctr]?.assertions[0]);
+  document
+    .getElementById("assertion_second")
+    .setAttribute("value", questions[ctr]?.assertions[1]);
+  document
+    .getElementById("assertion_third")
+    .setAttribute("value", questions[ctr]?.assertions[2]);
+  document
+    .getElementById("assertion_fourth")
+    .setAttribute("value", questions[ctr]?.assertions[3]);
   num++;
   moveBar();
+}
+function buttonGreen(d) {
+  d.preventDefault();
+  secondContenair = d.target.offsetParent;
+
+  for (let i = 0; i < monInput.length; i++) {
+    if (monInput[i].checked == true) {
+      console.log(monInput[i].value);
+      console.log(questions[ctr]?.answers);
+      if (monInput[i].value === questions[ctr]?.answers) {
+        score++;
+      }
+      monInput[i].checked = false;
+      monInput[i].parentElement.classList.remove("borderGreen");
+    }
+  }
+
+  if (ctr <= 15) {
+    ctr++;
+    quizzes();
+  }
+  if (ctr >= 14) {
+    nextBtn.textContent = "Terminer";
+  }
+
+  if (ctr >= 15) {
+    validQuiz(secondContenair);
+  }
 }
 
 function moveBar() {
@@ -114,27 +162,25 @@ function moveBar() {
   let countTime = document.getElementById("count_time");
   clearInterval(intervalID);
   let n = 60;
+
   if (n == 60) {
     n = 60;
     let width = 100;
     intervalID = setInterval(frame, 1000);
+
     function frame() {
       if (width <= 0) {
         clearInterval(intervalID);
-        n = 0;
         if (ctr <= 15) {
-          let monInput = document.querySelectorAll('input[type="radio"]');
           ctr++;
-          quizzes(contennair);
-          buttonGreen();
+          quizzes();
         }
-        if (ctr >= 15 && score >= 8) {
-          validQuiz(username, email);
-          n = 0;
+        if (ctr >= 14) {
+          nextBtn.textContent = "Terminer";
         }
-        if (ctr >= 15 && score < 8) {
-          invalidQuiz(username, email);
-          n = 0;
+        if (ctr >= 15) {
+          let secContenair = myBar.offsetParent;
+          validQuiz(secContenair);
         }
       } else {
         width -= 1.667;
@@ -146,52 +192,24 @@ function moveBar() {
   }
 }
 
-function exitBtn() {
-  document.getElementById("btn_orange").addEventListener("click", function (e) {
-    e.preventDefault();
-    if (score >= 8 ) {
-      validQuiz(username, email);
-      document.getElementById("accueil").addEventListener("click", showAccueil);
-    }
+function exitQuiz(e) {
+  e.preventDefault();
+  secondContenair = e.target.offsetParent;
 
-    if (score < 8) {
-      invalidQuiz(username, email);
-      document.getElementById("accueil").addEventListener("click", showAccueil);
-    }
-  });
-}
-
-function buttonGreen() {
-  let nextBtn = document.getElementById("btn_green");
-  let monInput = document.querySelectorAll('input[type="radio"]');
-
-  nextBtn.addEventListener("click", function (d) {
-    d.preventDefault();
-    for (let i = 0; i < monInput.length; i++) {
-      if (monInput[i].checked) {
-        if (monInput[i].value === questions[ctr]?.answers) {
-          score++;
-          console.log(score);
-        }
+  for (let i = 0; i < monInput.length; i++) {
+    if (monInput[i].checked == true) {
+      console.log(monInput[i].value);
+      console.log(questions[ctr]?.answers);
+      if (monInput[i].value === questions[ctr]?.answers) {
+        score++;
       }
+      monInput[i].checked = false;
+      monInput[i].parentElement.classList.remove("borderGreen");
     }
+  }
 
-    if (ctr <= 15) {
-      ctr++;
-      quizzes(contennair);
-      buttonGreen();
-    }
-
-    if (ctr >= 15 && score >= 8) {
-      validQuiz(username, email);
-      document.getElementById("accueil").addEventListener("click", showAccueil);
-    }
-
-    if (ctr >= 15 && score < 8) {
-      invalidQuiz(username, email);
-      document.getElementById("accueil").addEventListener("click", showAccueil);
-    }
-  });
+  validQuiz(secondContenair);
+  console.log(score);
 }
 
 let questions = [
@@ -244,10 +262,10 @@ let questions = [
   },
   {
     question:
-      "Quel est l’objet qui se trouve dans TOP de la racine en JavaScript ?",
-    assertions: ["url", " top", " window", "document"],
+      "Quel méthode JavaScrip qui permet d' obtenir un tableau de  correspondance d'une chaîne?",
+    assertions: ["replace()", "match()", " RegExp", "search()"],
 
-    answers: "window",
+    answers: "match()",
   },
   {
     question:
@@ -329,60 +347,32 @@ let questions = [
   },
 ];
 
-function validQuiz(monNom, validMail) {
-  contennair.innerHTML = `
-        <div class="validQuiz">
-        <h1>${monNom}</h1>
-        <p>${validMail}</p>
-        <figure>
-          <img src="valid.svg" alt="quiz valider">
-        </figure>
-        <p><span>${score}</span>/15</p>
-        <div><button type="submit" id="accueil">Accueil</button></div>
-      </div>
-    </div>
-`;
-}
+function validQuiz(secondContenair) {
+  document.querySelector("#user_name").innerText = username;
+  document.querySelector("#e_mail").innerText = email;
+  document.querySelector("#monScore").innerText = score;
+  secondContenair.style.display = "none";
+  secondContenair.nextElementSibling.style.display = "flex";
+  clearInterval(intervalID);
 
-function invalidQuiz(monNom, validMail) {
-  contennair.innerHTML = `
-        <div class="validQuiz">
-        <h1>${monNom}</h1>
-        <p>${validMail}</p>
-        <figure>
-          <img src="Vector.svg" alt="quiz invalider">
-        </figure>
-        <p><span>${score}</span>/15</p>
-        <div><button type="submit" id="accueil">Accueil</button></div>
-      </div>
-    </div>
-`;
+  if (score >= 8) {
+    document.querySelector("img").setAttribute("src", "valid.svg");
+    document.getElementById("accueil").addEventListener("click", showAccueil);
+  }
+
+  if (score < 8) {
+    document.querySelector("img").setAttribute("src", "Vector.svg");
+    document.getElementById("accueil").addEventListener("click", showAccueil);
+  }
 }
 
 function showAccueil(a) {
   a.preventDefault();
   clearInterval(intervalID);
-  contennair.innerHTML = `      <div class="box_quiz" id="box_quiz">
-        <h1>JavaScript Quiz</h1>
-        <p>
-          Evaluer vos compétences en JavaScript en répondant aux questions nous
-          avons spécialement selectionner pour vous. c'est fun et c'est gratuit
-        </p>
-        <form action="" id="mon_formulaire">
-          <div>
-            <label for="nom">Nom</label><br /><br />
-            <input type="text" id="nom" />
-            <span id="info_nom">salut</span>
-          </div>
-          <div>
-            <label for="email">Email</label><br /><br />
-            <input type="text" id="mail" />
-            <span id="info_email">salut</span>
-          </div>
-          <div class="submit">
-            <button type="submit" id="submit">Commencer</button>
-          </div>
-        </form>
-      </div>`;
-  commencer;
+
+  ctr = 0;
+  num = 1;
+  thirdContennair = a.target.offsetParent;
+  thirdContennair.style.display = "none";
+  firstContenair.style.display = "flex";
 }

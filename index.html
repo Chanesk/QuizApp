@@ -23,21 +23,104 @@
         </p>
         <form action="" id="mon_formulaire">
           <div>
-            <label for="nom">Nom</label><br /><br />
+            <label for="nom">Nom</label><br />
             <input type="text" id="nom" />
-            <span id="info_nom">salut</span>
+            <span id="info_nom"></span>
           </div>
           <div>
-            <label for="email">Email</label><br /><br />
+            <label for="email">Email</label>
             <input type="text" id="mail" />
-            <span id="info_email">salut</span>
+            <span id="info_email"></span>
           </div>
           <div class="submit">
             <button type="submit" id="submit">Commencer</button>
           </div>
         </form>
       </div>
-      
+    </div>
+
+    <div class="container" style="display: none">
+      <div class="box_questions" id="box_questions">
+        <p id="quest_text"></p>
+        <div id="progres_bar">
+          <div id="question_count">
+            <div>Question <span id="quest_count">${num}</span>/15</div>
+            <div><span id="count_time"></span></div>
+          </div>
+          <div id="myProgress">
+            <div id="myBar"></div>
+          </div>
+        </div>
+        <form>
+          <div class="form_div">
+            <div>
+              <input
+                type="radio"
+                 value="" 
+                id="assertion_first"
+                name="assertion"
+              />
+              <label for="assertion_prem" id="ass_first"
+                ></label
+              >
+            </div>
+            <div>
+              <input
+                type="radio"
+                value="${questions[ctr]?.assertions[1]}"
+                id="assertion_second"
+                name="assertion"
+              />
+              <label for="assertion_deux" id="ass_second"
+                ></label
+              >
+            </div>
+            <div>
+              <input
+                type="radio"
+                value="${questions[ctr]?.assertions[2]}"
+                id="assertion_third"
+                name="assertion"
+              />
+              <label for="assertion_trois" id="ass_third"
+                ></label
+              >
+            </div>
+            <div>
+              <input
+                type="radio"
+                value="${questions[ctr]?.assertions[3]}"
+                id="assertion_fourth"
+                name="assertion"
+              />
+              <label for="assertion_quatre" id="ass_fourth"
+                ></label
+              >
+            </div>
+          </div>
+          <div class="submit_btn">
+            <div>
+              <button type="submit" id="btn_orange">Quitter</button>
+            </div>
+            <div>
+              <button type="submit" id="btn_green">Suivant</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="container" style="display: none">
+              <div class="validQuiz">
+        <h1 id="user_name"></h1>
+        <p id="e_mail"></p>
+        <figure>
+          <img src="" alt="quiz validation">
+        </figure>
+        <p><span id="monScore"></span>/15</p>
+        <div><button type="submit" id="accueil">Accueil</button></div>
+      </div>
+    </div>
     </div>
 
     <script src="script.js"></script>
