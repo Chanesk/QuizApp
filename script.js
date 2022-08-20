@@ -4,6 +4,8 @@ let nextBtn = document.getElementById("btn_green");
 let exitBtn = document.getElementById("btn_orange");
 let accueilBtn = document.getElementById("accueil");
 let monInput = document.querySelectorAll('input[type="radio"]');
+nextBtn.disabled = true;
+console.log(nextBtn.disabled);
 
 let firstContenair;
 let secondContenair;
@@ -18,11 +20,13 @@ let email = "";
 let intervalID;
 
 for (let i = 0; i < monInput.length; i++) {
-  monInput[i].addEventListener("change", function (e) {
-    document.querySelector(".borderGreen")?.classList.remove("borderGreen");
-    e.target.parentElement.classList.add("borderGreen");
-    nextBtn.style.background = "#028a3d";
-  });
+  monInput[i].addEventListener("change", surbrillance);
+}
+function surbrillance(e) {
+  nextBtn.disabled = false;
+  document.querySelector(".borderGreen")?.classList.remove("borderGreen");
+  e.target.parentElement.classList.add("borderGreen");
+  nextBtn.style.background = "#028a3d";
 }
 
 monFormulaire.addEventListener("submit", commencer);
@@ -72,6 +76,8 @@ function validNom(monNom) {
 
     verify = false;
   } else {
+    document.querySelector(".box_quiz div input").style.border =
+      "1px solid #555555";
     nom.innerText = "";
     verify = true;
   }
@@ -81,7 +87,7 @@ function validNom(monNom) {
 
 function validEmail(monMail) {
   let verify;
-  let validMail = monMail.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g);
+  let validMail = monMail.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,6}$/g);
   let mail = document.querySelector("#info_email");
 
   if (monMail === "") {
@@ -131,8 +137,10 @@ function quizzes(contennair) {
 function buttonGreen(d) {
   d.preventDefault();
   secondContenair = d.target.offsetParent;
-
+  nextBtn.style.background = "rgba(2, 138, 61, 0.42)";
   for (let i = 0; i < monInput.length; i++) {
+    console.log("surbrillance");
+    monInput[i].addEventListener("change", surbrillance);
     if (monInput[i].checked == true) {
       console.log(monInput[i].value);
       console.log(questions[ctr]?.answers);
