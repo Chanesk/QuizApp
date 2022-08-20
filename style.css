@@ -14,6 +14,7 @@ body {
   );
   position: relative;
   background-blend-mode: darken;
+
 }
 .container {
   display: flex;
